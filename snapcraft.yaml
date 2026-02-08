@@ -1,0 +1,62 @@
+name: ares-emulator
+base: core24
+version: '147'
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+  arm64:
+    build-on: [arm64]
+    build-for: [arm64]
+summary: Multi-system console emulation suite
+description: |
+ ares is a cross-platform, open source, multi-system emulator, focusing on accuracy and preservation.
+grade: stable
+confinement: strict
+icon: ares.svg
+
+apps:
+  ares-emulator:
+    command: usr/bin/ares
+    desktop: usr/share/applications/ares.desktop
+    common-id: dev.ares.ares
+    extensions: [gnome]
+    plugs:
+      - unity7
+      - screen-inhibit-control
+      - audio-playback
+      - network
+      - network-bind
+      - network-status
+      - home
+      - removable-media
+      - mount-observe
+      - joystick
+      - bluez
+      - hardware-observe
+
+plugs:
+  shared-memory:
+    private: true
+
+parts:
+  ares-emulator-app:
+    plugin: cmake
+    source: https://github.com/ares-emulator/ares.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
+    build-packages:
+      - clang
+    cmake-parameters:
+      - -Wno-dev
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DARES_BUILD_LOCAL=OFF
+      - -DARES_BUNDLE_SHADERS=OFF
+      - -DARES_SKIP_DEPS=ON
+      - -DCMAKE_C_COMPILER=clang
+      - -DCMAKE_CXX_COMPILER=clang++
+      - -DARES_BUILD_OFFICIAL=YES
+      - -GNinja
+    override-build: |
+      craftctl default
+      sed -i 's|Name=ares|Name=ares [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/ares.desktop
