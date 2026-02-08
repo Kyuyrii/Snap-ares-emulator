@@ -17,6 +17,7 @@ icon: ares.svg
 
 apps:
   ares-emulator:
+    command-chain: [snap/command-chain/override-xdg-paths]
     command: usr/bin/ares
     desktop: usr/share/applications/ares.desktop
     common-id: dev.ares.ares
@@ -60,3 +61,10 @@ parts:
     override-build: |
       craftctl default
       sed -i 's|Name=ares|Name=ares [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/ares.desktop
+
+  command-chain:
+    after: [ares-emulator-app]
+    plugin: dump
+    source: ./command-chain/
+    organize:
+      override-xdg-paths: snap/command-chain/override-xdg-paths
