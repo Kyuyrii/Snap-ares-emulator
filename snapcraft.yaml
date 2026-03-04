@@ -63,7 +63,8 @@ parts:
     override-build: |
       craftctl default
       sed -i 's|Name=ares|Name=ares [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/ares.desktop
-      patchelf --replace-needed /root/stage/usr/lib/x86_64-linux-gnu/librashader.so librashader.so $CRAFT_PART_INSTALL/usr/bin/ares
+      patchelf --replace-needed /build/ares-emulator/stage/usr/lib/x86_64-linux-gnu/librashader.so librashader.so $CRAFT_PART_INSTALL/usr/bin/ares
+#      patchelf --replace-needed /root/stage/usr/lib/x86_64-linux-gnu/librashader.so librashader.so $CRAFT_PART_INSTALL/usr/bin/ares
 
   slang-shaders:
     after: [librashader]
