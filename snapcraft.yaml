@@ -42,11 +42,13 @@ plugs:
 
 parts:
   ares-emulator-app:
+    after: [librashader]
     plugin: cmake
     source: https://github.com/ares-emulator/ares.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION
     build-packages:
       - clang
+      - patchelf
     cmake-parameters:
       - -Wno-dev
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
@@ -61,6 +63,27 @@ parts:
     override-build: |
       craftctl default
       sed -i 's|Name=ares|Name=ares [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/ares.desktop
+      patchelf --replace-needed /root/stage/usr/lib/x86_64-linux-gnu/librashader.so librashader.so $CRAFT_PART_INSTALL/usr/bin/ares
+
+  slang-shaders:
+    after: [librashader]
+    plugin: make
+    source: https://github.com/libretro/slang-shaders.git
+    make-parameters:
+      - PREFIX=/usr
+
+  librashader:
+    plugin: nil
+    source: https://github.com/SnowflakePowered/librashader.git
+    source-tag: librashader-v0.10.1
+    build-snaps: [rustup]
+    override-build: |
+      rustup default stable
+      cargo run -p librashader-build-script -- --profile optimized --stable
+      mkdir -p $CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/
+      mkdir -p $CRAFT_PART_INSTALL/usr/include
+      mv target/optimized/librashader.so $CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/librashader.so
+      mv include $CRAFT_PART_INSTALL/usr/include/librashader
 
   command-chain:
     after: [ares-emulator-app]
