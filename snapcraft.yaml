@@ -1,6 +1,6 @@
 name: ares-emulator
-base: core24
-version: '147'
+base: core26
+version: '148'
 platforms:
   amd64:
     build-on: [amd64]
@@ -70,7 +70,7 @@ parts:
     after: [slang-shaders]
     plugin: cmake
     source: https://github.com/libsdl-org/SDL.git
-    source-tag: release-3.4.2
+    source-tag: release-3.4.18
     build-packages:
       - libdrm-dev
       - libxkbcommon-dev
@@ -87,13 +87,14 @@ parts:
     after: [librashader]
     plugin: make
     source: https://github.com/libretro/slang-shaders.git
+    source-commit: cef2de6123cccbf0393ed6071ffd6e4a8d092145
     make-parameters:
       - PREFIX=/usr
 
   librashader:
     plugin: nil
     source: https://github.com/SnowflakePowered/librashader.git
-    source-tag: librashader-v0.10.1
+    source-tag: librashader-v0.12.1
     build-snaps: [rustup]
     override-build: |
       rustup default stable
